@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+</head>
+<body>
+    <div class="container p-3">
+        <h2>Users list</h2>
+        <form name="userForm">
+            <input type="hidden" name="id" value="0">
+            <div class="mb-3">
+                <label for="name" class="form-label">Name:</label>
+                <input type="text" class="form-control" name="name">
+            </div>
+            <div class="mb-3">
+                <label for="age" class="form-label">Age:</label>
+                <input type="text" class="form-control" name="age">
+            </div>
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a id="reset" class="btn btn-danger">Cancel</a>
+            </div>
+        </form>
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+    
+            </tbody>
+        </table>
+    </div>
+
+    
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+    <script>
+        async function getUsers(){
+            const response = await fetch("api/users", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            if(response.ok === true){
+                const users = await response.json();
+                let tbody = document.querySelector("tbody");
+                users.forEach( user => {
+                    tbody.append(rowCreate(user));
+                });
+            }
+        }
+
+        async function getUser(id){
+            const response = await fetch("api/users/" + id, {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            if(response.ok === true){
+                const user = await response.json();
+                const form = document.forms["userForm"];
+                form.elements["id"].value = user.id;
+                form.elements["name"].value = user.name;
+                form.elements["age"].value = user.age;
+            }
+        }
+
+        async function createUser(userName, userAge){
+            const response = await fetch("api/users", {
+                method: "POST",
+                headers: { "Accept": "application/json",
+                           "Content-Type": "application/json",
+                         },
+                body: JSON.stringify({
+                    name: userName,
+                    age: userAge
+                })
+            });
+
+            if(response.ok === true){
+                const user = await response.json();
+                formReset();
+                document.querySelector("tbody").append(rowCreate(user));
+            }
+        }
+
+        async function editUser(userId, userName, userAge){
+            const response = await fetch("api/users", {
+                method: "PUT",
+                headers: { "Accept": "application/json",
+                           "Content-Type": "application/json",
+                         },
+                body: JSON.stringify({
+                    id: userId,
+                    name: userName,
+                    age: userAge
+                })
+            });
+
+            if(response.ok === true){
+                const user = await response.json();
+                const tr = document.querySelector("tr[data-rowid='" + user.id + "']");
+                tr.replaceWith(rowCreate(user));
+                formReset();
+            }
+        }
+
+        async function deleteUser(id){
+            const response = await fetch("api/users/" + id, {
+                method: "DELETE",
+                headers: { "Accept": "application/json" }
+            });
+
+            if(response.ok === true){
+                const user = await response.json();
+                const tr = document.querySelector("tr[data-rowid='" + user.id + "']");
+                tr.remove();
+            }
+        }
+
+
+        function rowCreate(user){
+            const tr = document.createElement("tr");
+            tr.setAttribute("data-rowid", user.id);
+
+            const tdId = document.createElement("td");
+            tdId.append(user.id);
+            tr.append(tdId);
+
+            const tdName = document.createElement("td");
+            tdName.append(user.name);
+            tr.append(tdName);
+
+            const tdAge = document.createElement("td");
+            tdAge.append(user.age);
+            tr.append(tdAge);
+
+            const tdEdit = document.createElement("td");
+            const linkEdit = document.createElement("a");
+            linkEdit.setAttribute("data-id", user.id);
+            linkEdit.classList.add("btn");
+            linkEdit.classList.add("btn-primary");
+            linkEdit.append("Edit");
+            linkEdit.addEventListener("click", e => {
+                e.preventDefault();
+                getUser(user.id);
+            });
+            tdEdit.append(linkEdit);
+            tr.append(tdEdit);
+
+            const tdDelete = document.createElement("td");
+            const linkDelete = document.createElement("a");
+            linkDelete.setAttribute("data-id", user.id);
+            linkDelete.classList.add("btn");
+            linkDelete.classList.add("btn-danger");
+            linkDelete.append("Delete");
+            linkDelete.addEventListener("click", e => {
+                e.preventDefault();
+                deleteUser(user.id);
+            });
+            tdDelete.append(linkDelete);
+            tr.append(tdDelete);
+
+            return tr;
+        }
+
+        function formReset(){
+            const form = document.forms["userForm"];
+            form.reset();
+            form.elements["id"].value = 0;
+        }
+
+        document.getElementById("reset")
+                .addEventListener("click", e =>{
+                    e.preventDefault();
+                    formReset();
+                });
+
+        document.forms["userForm"]
+                .addEventListener("submit", e => {
+                    e.preventDefault();
+                    const form = document.forms["userForm"];
+                    const id = form.elements["id"].value;
+                    const name = form.elements["name"].value;
+                    const age = form.elements["age"].value;
+
+                    if(id == 0)
+                        createUser(name, age);
+                    else
+                        editUser(id, name, age);
+                });
+        
+        getUsers();
+    </script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <script>
+        /*
+        fetch("http://spd111.my/handler.php")
+            .then(response => response.text())
+            .then(responseText => document.write(responseText));
+        */
+        
+        async function getText(){
+            let response = await fetch("http://spd111.my/handler.php");
+            console.log(response.status, response.statusText);
+            for(header of response.headers)
+                console.log(header[0], header[1]);
+            
+            //document.write(await response.text());
+        }
+
+        getText();
+    </script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <script>
+        let promise = new Promise(function(resolve, reject){
+            console.log("Async hello world");
+            function sayHi() {
+                console.log('Привет');
+            }
+            setTimeout(sayHi, 1000);
+            
+        });
+        console.log("Other code");
+
+        let a = 10, b = 3;
+        let prom_div = new Promise(function(resolve, reject){
+            if(b === 0)
+                reject("my devide by zero");
+            else{
+                //myfunc();
+                let c = a / b;
+                resolve(c);
+            }
+        });
+        // prom_div.catch(function(error){
+        //     console.log("ERROR! ", error);
+        // });
+        prom_div.then(function(value){
+            console.log("Div = ", value);
+        }, function(error){
+            console.log("ERROR! ", error);
+        });
+        
+
+        function sum(a, b){
+            return new Promise(function(resolve){
+                let c = a + b;
+                resolve(c);
+            });
+        }
+        sum(10, 20).then((value) => console.log(value));
+        sum(60, 40).then((value) => console.log(value));
+
+        function sum_def(a, b, func){
+            if(func === undefined) 
+                func = function(value) { console.log("Sum = ", value); };
+            return new Promise((resolve) =>{
+                resolve(a + b);
+            }).then(func);
+        };
+        sum_def(10, 20, (value) => console.log("My sum = ", value))
+        sum_def(30, 40);
+
+
+        let promise_hello = new Promise((resolve) =>{
+            resolve("Hello");
+        });
+
+        let promise_world = promise_hello.then((value) =>{
+            return value + " world!";
+        });
+
+        let promise_people = promise_world.then((value) =>{
+            return value + " Hello people!";
+        });
+
+        promise_people.then((value) => {
+            console.log(value);
+        });
+
+        new Promise(resolve => resolve("Hello"))
+            .then(value => value + " world!")
+            .then(value => value + " Hello people")
+            .then(value => value + " from Top!")
+            .then(value => console.log(value));
+
+        function genNumber(strNum){
+            return new Promise((resolve, reject) =>{
+                let parseNum = parseInt(strNum);
+                if(isNaN(parseNum)) 
+                    reject("Str is not a number");
+                else
+                    resolve(parseNum);
+            });
+        };
+
+        function printNumber(str){
+            genNumber(str)
+                .then(value =>{
+                    if(value === 13)
+                        throw "Not lucky number (((";
+                    return value * value;
+                })
+                .then(value => console.log("Value^2 = ", value))
+                .catch(error => console.log("Error with gen num: ", error))
+                .finally(() => console.log("The end!"));
+        };
+
+        printNumber("abc");
+        printNumber("12");
+        printNumber("13");
+        printNumber("3");
+
+        function mult(a, b){
+            return new Promise((resolve) => {
+                resolve(a * b);
+            });
+        }
+
+        async function calc(){
+            let result = await mult(20, 30);
+            console.log("Mult = ", result);
+        }
+
+        calc();
+
+    </script>
+</body>
+</html>

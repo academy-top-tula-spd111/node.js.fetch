@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>Hello world</h2>
+    <form name="person">
+        <input name="name">
+        <input name="age">
+        <button>Send</button>
+    </form>
+
+    <script>
+        let btn = document.querySelector("button");
+        btn.onclick = () =>{
+            let person = new FormData(document.forms.person);
+            person.append("phone", "8 999 123-45-67");
+
+            let request = new XMLHttpRequest();
+            let uri = new URL("http://spd111.my/handler.php");
+
+            request.open("POST", uri);
+            request.send(person);
+            request.onload = () => console.log(request.response);
+        }
+
+
+        
+
+        /*
+        uri.searchParams.set('name', 'Joe');
+        uri.searchParams.set('age', 25);
+
+
+        request.open("GET", uri, true);
+        request.onload = function() {
+            console.log(`Загружено: ${request.status} ${request.response}`);
+        };
+        request.onerror = function() {
+            console.log(`Ошибка соединения`);
+        };
+
+        */
+
+
+        //request.send();
+        //document.write(request.response);
+        
+    </script>
+</body>
+</html>

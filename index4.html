@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        let user;
+        getUser();
+        console.log("User");
+
+        async function getUser(){
+            let response = await fetch("/user");
+            user = await response.json();
+            console.log(user);
+        }
+
+        // fetch("/hello")
+        //     .then(response => response.json())
+        //     .then(user => console.log(user.name, user.email));
+            // .then(response =>{
+            //     if(response.redirected){
+            //         console.log(response.headers.get("My-Code"));
+            //     }
+            //});
+    </script>
+</body>
+</html>

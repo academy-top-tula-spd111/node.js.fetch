@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .c1{
+            background-color: aquamarine;
+        }
+        div{
+            background-color: bisque;
+            width: 100px;
+            height: 100px;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    
+    
+    <div>Hello</div>
+        
+    <button id="btn">Click</button>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.0/dist/jquery.min.js"></script>
+    <script>
+        jQuery(document).ready(function() {
+            // console.log($(".c1").html((index, inner) => {
+            //     console.log(index);
+            //     console.log(inner);
+            //     return new Date();
+            // }));
+
+            // $(".c1").after("<div>");
+            // $("h2").wrap("<div>");
+            
+            $("#btn").click(e =>{
+                //$("div").toggleClass("c1");
+                //console.log($("div").css("backgroundColor", "red"));
+                // $("div").each((i, e) => {
+                //     //this.html(Math.random());
+                //     e.innerHTML = Math.random();
+                // })
+
+                $("div").animate({left: "+=50px"}, 1000);
+            });
+            
+        });
+    </script>
+</body>
+</html>
